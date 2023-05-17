@@ -2,6 +2,8 @@ package game;
 
 import java.util.ArrayList;
 
+import javax.lang.model.util.ElementScanner14;
+
 /**
  * 2048 Board
  * Methods to complete:
@@ -47,7 +49,16 @@ public class Board {
      * Assume that gameBoard has been initialized.
      **/
     public void updateOpenSpaces() {
-        // WRITE YOUR CODE HERE
+        openSpaces = new ArrayList<>();
+        for(int i = 0; i < gameBoard.length; i++)
+        {
+            for(int j = 0; j < gameBoard[i].length; j++)
+            {
+                if(gameBoard[i][j] == 0)
+                openSpaces.add(new BoardSpot(i, j)); 
+            }
+        }
+
     }
 
     /**
@@ -61,7 +72,18 @@ public class Board {
      * Note: On the driver updateOpenStapes() is called before this method to ensure that openSpaces is up to date.
      **/
     public void addRandomTile() {
-        // WRITE YOUR CODE HERE
+        BoardSpot t = openSpaces.get(StdRandom.uniform(0, openSpaces.size()));
+
+
+        if(StdRandom.uniform(0.00, 1.00)< .1)
+        {
+            gameBoard[t.getRow()][t.getCol()] = 4;
+        }
+        else
+        {
+            gameBoard[t.getRow()][t.getCol()] = 2;
+        }  
+        
     }
 
     /**
@@ -71,7 +93,21 @@ public class Board {
      * (ex: 0 4 0 4 becomes 4 4 0 0).
      **/
     public void swipeLeft() {
-        // WRITE YOUR CODE HERE
+        for(int r = 0; r < gameBoard.length; r++)
+        {
+            for(int c = 0; c < gameBoard[r].length; c++)
+            {
+                for (int k = c+1; k < gameBoard[r].length; k++) 
+                {
+                    if(gameBoard[r][c] == 0 && gameBoard[r][k] != 0)
+                    {
+                        gameBoard[r][c] = gameBoard[r][k];
+                        gameBoard[r][k] = 0;
+                    }
+                }
+
+            }
+        }
     }
 
     /**
@@ -79,7 +115,17 @@ public class Board {
      * The leftmost value takes on double its own value, and the rightmost empties and becomes 0.
      **/
     public void mergeLeft() {
-        // WRITE YOUR CODE HERE
+        for(int r = 0; r < gameBoard.length; r++)
+        {
+            for(int c = 0; c < gameBoard[r].length - 1; c++)
+            {
+                if(gameBoard[r][c] == gameBoard[r][c+1] && gameBoard[r][c] !=0)
+                {
+                    gameBoard[r][c] = gameBoard[r][c+1] *2;
+                    gameBoard[r][c+1] = 0;
+                }
+            }
+        }
     }
 
     /**
@@ -101,7 +147,22 @@ public class Board {
      * 
      **/
     public void transpose() {
-        // WRITE YOUR CODE HERE
+        int [][] tempGameBoard = new int[4][4];
+        for(int i = 0; i < gameBoard.length; i++)
+        {
+            for(int j = 0; j < gameBoard[i].length; j++)
+            {
+                tempGameBoard[i][j] = gameBoard[i][j];
+            }
+
+        }       
+        for(int r = 0; r < gameBoard.length; r++)
+        {
+            for(int c = 0; c < gameBoard[r].length; c++)
+            {
+                gameBoard[r][c] = tempGameBoard[c][r];
+            }
+        }
     }
 
     /**
@@ -111,7 +172,25 @@ public class Board {
      * 
      **/
     public void flipRows() {
-        // WRITE YOUR CODE HERE
+        int counter = 0;
+        int [][] tempGameBoard = new int[4][4];
+        for(int i = 0; i < gameBoard.length; i++)
+        {
+            for(int j = 0; j < gameBoard[i].length; j++)
+            {
+                tempGameBoard[i][j] = gameBoard[i][j];
+            }
+
+        }       
+        for(int r = gameBoard.length - 1 ; r >= 0; r--)
+        {
+            for(int c = gameBoard[r].length - 1; c >= 0; c--)
+            {
+                gameBoard[r][counter] = tempGameBoard[r][c];
+                counter ++;
+            }
+            counter = 0;
+        }
     }
 
     /**
@@ -122,7 +201,44 @@ public class Board {
      * NOTE: if "letter" is not one of the above characters, do nothing. 
      **/
     public void makeMove(char letter) {
-        // WRITE YOUR CODE HERE
+        if(letter == 'L')
+        {
+            swipeLeft();
+            mergeLeft();
+            swipeLeft();
+        }
+        else if (letter == 'U')
+        {
+            rotateBoard();
+            rotateBoard();
+            rotateBoard();
+            swipeLeft();
+            mergeLeft();
+            swipeLeft();
+            rotateBoard();
+
+        }
+        else if(letter == 'R')
+        {
+            rotateBoard();
+            rotateBoard();
+            swipeLeft();
+            mergeLeft();
+            swipeLeft();
+            rotateBoard();
+            rotateBoard();
+        }
+        else if(letter == 'D')
+        {
+            rotateBoard();
+            swipeLeft();
+            mergeLeft();
+            swipeLeft();
+            rotateBoard();
+            rotateBoard();
+            rotateBoard();
+        }
+        
     }
 
     /**
